@@ -1,0 +1,18 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Banco de Dados Local
+*.duckdb
+*.db
+*.db.wal
+
+# Segredos
+
+.env
+
+#jupyter Notebooks
+.ipynb_checkpoints
+.ipynb
+

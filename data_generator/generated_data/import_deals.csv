@@ -1,0 +1,101 @@
+dealname,amount,pipeline,dealstage,contact_email,company_domain
+Atendimento - Laís,631.26,Pipeline de vendas,Negócio perdido,laís@yahoo.com.br,
+Atendimento - Benicio,484.48,Pipeline de vendas,Apresentação agendada,benicio.leão@ig.com.br,
+Atendimento - Maria Flor,713.69,Pipeline de vendas,Compromisso agendado,maria.flor.machado@yahoo.com.br,
+Atendimento - Marcelo,365.96,Pipeline de vendas,Qualificado para comprar,marcelo.montenegro@bol.com.br,
+Atendimento - Renan,267.22,Pipeline de vendas,Negócio perdido,renan.ferreira@yahoo.com.br,
+Atendimento - Letícia,562.82,Pipeline de vendas,Negócio perdido,letícia.barros@gmail.com,
+Atendimento - Marcelo,677.27,Pipeline de vendas,Negócio perdido,marcelo.montenegro@bol.com.br,
+Atendimento - Henry Gabriel,365.24,Pipeline de vendas,Qualificado para comprar,henry.gabriel.da.rosa@hotmail.com,
+Atendimento - Henry Gabriel,710.18,Pipeline de vendas,Negócio perdido,henry.gabriel.da.rosa@hotmail.com,
+Atendimento - Renan,486.7,Pipeline de vendas,Negócio perdido,renan.ferreira@yahoo.com.br,
+Atendimento - Yago,606.06,Pipeline de vendas,Negócio fechado,yago.rocha@hotmail.com,nunes.med.br
+Atendimento - Luara,568.18,Pipeline de vendas,Negócio perdido,luara.das.neves@yahoo.com.br,luz.med.br
+Atendimento - Laís,674.08,Pipeline de vendas,Compromisso agendado,laís@yahoo.com.br,sá.med.br
+Atendimento - Helena,482.1,Pipeline de vendas,Compromisso agendado,helena.leão@uol.com.br,nunes.med.br
+Atendimento - Clara,335.21,Pipeline de vendas,Negócio perdido,clara.rocha@uol.com.br,albuquerque.med.br
+Atendimento - Jade,264.4,Pipeline de vendas,Negócio fechado,jade.aragão@uol.com.br,neves.med.br
+Atendimento - Guilherme,462.66,Pipeline de vendas,Compromisso agendado,guilherme@yahoo.com.br,rodrigues.med.br
+Atendimento - Isadora,518.9,Pipeline de vendas,Tomador de decisão envolvido,isadora.da.cruz@hotmail.com,lima.med.br
+Atendimento - Lucca,399.92,Pipeline de vendas,Contrato enviado,lucca.mendes@hotmail.com,machado.med.br
+Atendimento - Jade,448.22,Pipeline de vendas,Compromisso agendado,jade.aragão@uol.com.br,mata.med.br
+Atendimento - Vitor Gabriel,693.11,Pipeline de vendas,Compromisso agendado,vitor.gabriel.ribeiro@yahoo.com.br,sá.med.br
+Atendimento - Heloísa,128.89,Pipeline de vendas,Compromisso agendado,heloísa.da.costa@hotmail.com,sá.med.br
+Atendimento - Vitor Gabriel,194.13,Pipeline de vendas,Compromisso agendado,vitor.gabriel.ribeiro@yahoo.com.br,costa.med.br
+Atendimento - Emanuel,784.36,Pipeline de vendas,Compromisso agendado,emanuel@yahoo.com.br,rocha.med.br
+Atendimento - Valentim,252.91,Pipeline de vendas,Qualificado para comprar,valentim@yahoo.com.br,ramos.med.br
+Atendimento - Heloisa,644.83,Pipeline de vendas,Negócio fechado,heloisa.cardoso@ig.com.br,rodrigues.med.br
+Atendimento - Jade,780.14,Pipeline de vendas,Tomador de decisão envolvido,jade.aragão@uol.com.br,nogueira.med.br
+Atendimento - Davi,737.33,Pipeline de vendas,Compromisso agendado,davi.vargas@uol.com.br,sá.med.br
+Atendimento - Mariane,433.63,Pipeline de vendas,Tomador de decisão envolvido,mariane.andrade@uol.com.br,ramos.med.br
+Atendimento - Ana,561.39,Pipeline de vendas,Compromisso agendado,ana.nunes@hotmail.com,freitas.med.br
+Atendimento - Bárbara,202.56,Pipeline de vendas,Negócio perdido,bárbara@yahoo.com.br,sá.med.br
+Atendimento - Ravy,789.22,Pipeline de vendas,Compromisso agendado,ravy.rodrigues@uol.com.br,neves.med.br
+Atendimento - Lucca,198.4,Pipeline de vendas,Apresentação agendada,lucca.mendes@hotmail.com,ramos.med.br
+Atendimento - Luigi,675.05,Pipeline de vendas,Qualificado para comprar,luigi.peixoto@uol.com.br,ramos.med.br
+Atendimento - Emanuel,434.98,Pipeline de vendas,Compromisso agendado,emanuel@yahoo.com.br,neves.med.br
+Atendimento - Helena,435.61,Pipeline de vendas,Negócio perdido,helena.da.conceição@uol.com.br,ribeiro.med.br
+Atendimento - Maitê,584.41,Pipeline de vendas,Qualificado para comprar,maitê.farias@hotmail.com,lopes.med.br
+Atendimento - Maria Júlia,437.4,Pipeline de vendas,Compromisso agendado,maria.júlia.da.mota@gmail.com,lopes.med.br
+Atendimento - Vitor Gabriel,561.02,Pipeline de vendas,Compromisso agendado,vitor.gabriel.ribeiro@yahoo.com.br,nunes.med.br
+Atendimento - Luiz Fernando,494.05,Pipeline de vendas,Compromisso agendado,luiz.fernando.sousa@gmail.com,lopes.med.br
+Atendimento - Maria Júlia,420.37,Pipeline de vendas,Negócio perdido,maria.júlia.da.mota@gmail.com,sá.med.br
+Atendimento - Marcela,440.35,Pipeline de vendas,Compromisso agendado,marcela.lima@hotmail.com,ribeiro.med.br
+Atendimento - Isadora,694.64,Pipeline de vendas,Apresentação agendada,isadora.da.cruz@hotmail.com,abreu.med.br
+Atendimento - João Guilherme,767.5,Pipeline de vendas,Negócio perdido,joão.guilherme.araújo@yahoo.com.br,rodrigues.med.br
+Atendimento - João Felipe,352.79,Pipeline de vendas,Compromisso agendado,joão.felipe.caldeira@ig.com.br,nogueira.med.br
+Atendimento - Luigi,660.81,Pipeline de vendas,Compromisso agendado,luigi.peixoto@uol.com.br,mata.med.br
+Atendimento - Helena,484.13,Pipeline de vendas,Contrato enviado,helena.da.conceição@uol.com.br,peixoto.med.br
+Atendimento - Caleb,539.08,Pipeline de vendas,Negócio perdido,caleb.castro@yahoo.com.br,nogueira.med.br
+Atendimento - Mariane,200.14,Pipeline de vendas,Compromisso agendado,mariane.andrade@uol.com.br,abreu.med.br
+Atendimento - Caleb,739.77,Pipeline de vendas,Compromisso agendado,caleb.castro@yahoo.com.br,luz.med.br
+Atendimento - Henry Gabriel,738.68,Pipeline de vendas,Compromisso agendado,henry.gabriel.da.rosa@hotmail.com,lopes.med.br
+Atendimento - Isadora,148.7,Pipeline de vendas,Apresentação agendada,isadora.da.cruz@hotmail.com,freitas.med.br
+Atendimento - Maysa,768.28,Pipeline de vendas,Compromisso agendado,maysa.sousa@gmail.com,mata.med.br
+Atendimento - Ana,629.67,Pipeline de vendas,Qualificado para comprar,ana.nunes@hotmail.com,peixoto.med.br
+Atendimento - Benicio,246.96,Pipeline de vendas,Apresentação agendada,benicio.leão@ig.com.br,rocha.med.br
+Atendimento - Ana Cecília,698.28,Pipeline de vendas,Compromisso agendado,ana.cecília.casa.grande@hotmail.com,costa.med.br
+Atendimento - Emanuel,152.74,Pipeline de vendas,Apresentação agendada,emanuel@yahoo.com.br,lopes.med.br
+Atendimento - Valentim,237.68,Pipeline de vendas,Compromisso agendado,valentim@yahoo.com.br,rodrigues.med.br
+Atendimento - Gabriela,475.31,Pipeline de vendas,Negócio perdido,gabriela.borges@yahoo.com.br,lopes.med.br
+Atendimento - José Pedro,314.63,Pipeline de vendas,Negócio perdido,josé.pedro.fernandes@yahoo.com.br,luz.med.br
+Atendimento - Ravy,138.36,Pipeline de vendas,Tomador de decisão envolvido,ravy.rodrigues@uol.com.br,freitas.med.br
+Atendimento - Maitê,569.67,Pipeline de vendas,Qualificado para comprar,maitê.farias@hotmail.com,rodrigues.med.br
+Atendimento - Guilherme,488.91,Pipeline de vendas,Negócio perdido,guilherme@yahoo.com.br,nunes.med.br
+Atendimento - Jade,257.28,Pipeline de vendas,Negócio perdido,jade.aragão@uol.com.br,abreu.med.br
+Atendimento - Maitê,657.59,Pipeline de vendas,Negócio perdido,maitê.farias@hotmail.com,ribeiro.med.br
+Atendimento - João,428.05,Pipeline de vendas,Apresentação agendada,joão.camargo@hotmail.com,neves.med.br
+Atendimento - Bárbara,366.53,Pipeline de vendas,Apresentação agendada,bárbara@yahoo.com.br,rodrigues.med.br
+Atendimento - Vitor,761.83,Pipeline de vendas,Tomador de decisão envolvido,vitor.vieira@ig.com.br,lima.med.br
+Atendimento - Yago,179.96,Pipeline de vendas,Compromisso agendado,yago.rocha@hotmail.com,lima.med.br
+Atendimento - João Felipe,217.66,Pipeline de vendas,Compromisso agendado,joão.felipe.caldeira@ig.com.br,nogueira.med.br
+Atendimento - Henry Gabriel,553.4,Pipeline de vendas,Apresentação agendada,henry.gabriel.da.rosa@hotmail.com,sá.med.br
+Atendimento - Caleb,546.62,Pipeline de vendas,Qualificado para comprar,caleb.castro@yahoo.com.br,nogueira.med.br
+Atendimento - Ayla,642.39,Pipeline de vendas,Tomador de decisão envolvido,ayla.da.costa@ig.com.br,abreu.med.br
+Atendimento - Pietra,209.69,Pipeline de vendas,Qualificado para comprar,pietra.azevedo@gmail.com,peixoto.med.br
+Atendimento - Clara,174.56,Pipeline de vendas,Qualificado para comprar,clara.rocha@uol.com.br,lima.med.br
+Atendimento - Luigi,144.66,Pipeline de vendas,Apresentação agendada,luigi.peixoto@uol.com.br,nunes.med.br
+Atendimento - Lívia,548.82,Pipeline de vendas,Compromisso agendado,lívia.teixeira@yahoo.com.br,rodrigues.med.br
+Atendimento - Samuel,533.88,Pipeline de vendas,Contrato enviado,samuel.pastor@hotmail.com,lopes.med.br
+Atendimento - Clara,444.44,Pipeline de vendas,Apresentação agendada,clara.rocha@uol.com.br,rodrigues.med.br
+Atendimento - Luiz Fernando,139.77,Pipeline de vendas,Qualificado para comprar,luiz.fernando.sousa@gmail.com,sá.med.br
+Atendimento - Caleb,662.49,Pipeline de vendas,Compromisso agendado,caleb.castro@yahoo.com.br,lima.med.br
+Atendimento - Vicente,286.39,Pipeline de vendas,Compromisso agendado,vicente.rezende@uol.com.br,rocha.med.br
+Atendimento - Maria Júlia,578.95,Pipeline de vendas,Apresentação agendada,maria.júlia.da.mota@gmail.com,nogueira.med.br
+Atendimento - Luara,479.89,Pipeline de vendas,Compromisso agendado,luara.das.neves@yahoo.com.br,freitas.med.br
+Atendimento - Samuel,730.62,Pipeline de vendas,Compromisso agendado,samuel.pastor@hotmail.com,albuquerque.med.br
+Atendimento - Caleb,356.23,Pipeline de vendas,Apresentação agendada,caleb.castro@yahoo.com.br,freitas.med.br
+Atendimento - Jade,262.25,Pipeline de vendas,Negócio fechado,jade.aragão@uol.com.br,neves.med.br
+Atendimento - Bárbara,716.48,Pipeline de vendas,Negócio perdido,bárbara@yahoo.com.br,rodrigues.med.br
+Atendimento - Renan,588.1,Pipeline de vendas,Qualificado para comprar,renan.ferreira@yahoo.com.br,costa.med.br
+Atendimento - Bárbara,642.75,Pipeline de vendas,Apresentação agendada,bárbara@yahoo.com.br,lima.med.br
+Atendimento - Helena,447.78,Pipeline de vendas,Tomador de decisão envolvido,helena.da.conceição@uol.com.br,machado.med.br
+Atendimento - Davi,340.25,Pipeline de vendas,Apresentação agendada,davi.vargas@uol.com.br,abreu.med.br
+Atendimento - Bárbara,511.07,Pipeline de vendas,Negócio perdido,bárbara@yahoo.com.br,nunes.med.br
+Atendimento - Heloísa,628.81,Pipeline de vendas,Negócio perdido,heloísa.da.costa@hotmail.com,rocha.med.br
+Atendimento - Caleb,746.42,Pipeline de vendas,Compromisso agendado,caleb.castro@yahoo.com.br,abreu.med.br
+Atendimento - Clara,153.02,Pipeline de vendas,Compromisso agendado,clara.rocha@uol.com.br,rodrigues.med.br
+Atendimento - Bárbara,781.74,Pipeline de vendas,Qualificado para comprar,bárbara@yahoo.com.br,abreu.med.br
+Atendimento - Bárbara,257.39,Pipeline de vendas,Apresentação agendada,bárbara@yahoo.com.br,nogueira.med.br
+Atendimento - Lívia,322.79,Pipeline de vendas,Qualificado para comprar,lívia.teixeira@yahoo.com.br,abreu.med.br
+Atendimento - Luigi,455.85,Pipeline de vendas,Apresentação agendada,luigi.peixoto@uol.com.br,machado.med.br
