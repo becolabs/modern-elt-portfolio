@@ -1,0 +1,5 @@
+version: 0.1.1
+default:
+  # Default profile created for data IO access.
+  # Add your credentials for the source you use, and delete the rest.
+  HUBSPOT_ACCESS_TOKEN: config['HUBSPOT_ACCESS_TOKEN']

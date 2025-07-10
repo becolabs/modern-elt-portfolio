@@ -106,9 +106,65 @@ Estes passos permitem replicar o ambiente de desenvolvimento e popular o HubSpot
     ```
     *   Acesse a interface do Mage em `http://localhost:6789`.
 
-## Próximos Passos
+Excelente ideia. Um bom README é um documento vivo que reflete o estado atual do projeto. Atualizá-lo agora é a atitude correta de um engenheiro que se orgulha do seu trabalho.
 
-O próximo grande objetivo é construir o pipeline de **Extração e Carregamento** dentro do Mage.
-*   Criar um bloco **Data Loader** para se conectar à API do HubSpot usando o token de acesso.
-*   Implementar a lógica de paginação para buscar todos os registros dos objetos `Companies`, `Contacts` e `Deals`.
-*   Criar um bloco **Data Exporter** para carregar os dados extraídos em um arquivo de banco de dados DuckDB local.
+Vamos substituir a seção "Próximos Passos" por uma descrição do que **concluímos** e, em seguida, criar uma nova seção "Próximos Passos" para a Fase III. Também adicionaremos uma seção de "Lições Aprendidas", que é extremamente valiosa para um portfólio, pois demonstra sua capacidade de resolver problemas do mundo real.
+
+Aqui está a sugestão de atualização para o seu `README.md`.
+
+---
+
+### Fase II: Extração e Carregamento com Mage (Concluído)
+
+Esta fase do projeto está concluída. Foi implementado um pipeline EL (Extract-Load) completo e robusto dentro do orquestrador Mage, responsável por buscar dados brutos da API do HubSpot e carregá-los em nosso data warehouse local.
+
+O pipeline `hubspot_to_duckdb` consiste em dois blocos principais:
+
+1.  **`load_hubspot_data.py` (Data Loader):**
+    *   Conecta-se de forma segura à API do HubSpot usando um token de acesso carregado a partir de um arquivo `.env` local.
+    *   Implementa uma função de paginação robusta para extrair **todos** os registros dos objetos `Contacts`, `Companies` e `Deals`.
+    *   Normaliza a resposta JSON da API em DataFrames do Pandas para fácil manipulação.
+
+2.  **`export_to_duckdb.py` (Data Exporter):**
+    *   Recebe os dados do bloco anterior.
+    *   Converte os dados (que o Mage passa como listas) de volta para DataFrames do Pandas.
+    *   Conecta-se a um arquivo de banco de dados DuckDB local chamado `hubspot_raw.db`.
+    *   Usa a instrução `CREATE OR REPLACE TABLE` para carregar os dados, tornando o pipeline **idempotente** (pode ser executado várias vezes sem causar erros ou duplicatas).
+
+O resultado final desta fase é um arquivo `hubspot_raw.db` populado, que representa nossa camada **Bronze** de dados brutos, pronto para a transformação.
+
+### Executando o Pipeline de Extração e Carregamento
+
+1.  Certifique-se de que seu ambiente virtual (`venv`) está ativado e que todas as dependências foram instaladas com `pip install -r requirements.txt`.
+2.  Verifique se o arquivo `.env` existe na raiz do projeto (`modern-elt-portfolio/`) e contém seu `HUBSPOT_ACCESS_TOKEN`.
+3.  A partir do diretório raiz do projeto (`modern-elt-portfolio`), inicie o servidor do Mage:
+    ```bash
+    mage start hubspot_elt_project
+    ```
+4.  Acesse a UI do Mage em `http://localhost:6789`.
+5.  Navegue até o pipeline `hubspot_to_duckdb`.
+6.  Para garantir que todos os blocos sejam executados sem usar cache, clique na seta (▼) ao lado do botão de execução e selecione **"Run once"**.
+7.  Após a execução bem-sucedida, você encontrará o arquivo `hubspot_raw.db` no diretório `hubspot_elt_project/`.
+
+### Desafios e Lições Aprendidas na Fase II
+
+A implementação revelou vários desafios práticos e lições valiosas sobre o framework Mage e a engenharia de dados em geral:
+
+*   **Gerenciamento de Dependências:** Um conflito com a versão `2.0` da biblioteca `NumPy` foi resolvido fixando a versão em `numpy<2.0` no `requirements.txt`, garantindo um ambiente de desenvolvimento estável e reprodutível.
+*   **Peculiaridades do Mage:**
+    *   **Estrutura de Arquivos:** Descobrimos que os blocos de código de um pipeline precisam ser criados a partir da tela de edição do pipeline para que os arquivos `.py` sejam gerados na pasta correta (`pipelines/pipeline_name/`).
+    *   **Importação de Decoradores:** A maneira mais confiável de importar decoradores como `@data_loader` é usando o padrão de verificação `if 'decorator' not in globals(): ...`.
+    *   **Transferência de Dados:** O Mage converte DataFrames do Pandas para listas Python ao passá-los entre blocos. A solução foi reconverter a lista de volta para um DataFrame no bloco receptor.
+*   **Carregamento de Segredos:** O mecanismo padrão `io_config.yaml` se mostrou instável. A solução mais robusta foi carregar o `.env` manualmente no código usando a biblioteca `python-dotenv`, uma abordagem que é segura e também compatível com ambientes de produção na nuvem.
+
+### Próximos Passos: Fase III - Transformação com dbt
+
+Com os dados brutos carregados, a próxima fase se concentrará em transformá-los em insights acionáveis usando o dbt (data build tool).
+
+*   Inicializar um projeto dbt dentro da nossa estrutura de projeto Mage.
+*   Configurar a conexão do dbt para ler e escrever no nosso arquivo `hubspot_raw.db`.
+*   Construir modelos de **staging** para limpar, renomear e padronizar os dados brutos.
+*   Desenvolver modelos de **marts** (tabelas de fatos e dimensões) para criar uma visão de negócio coesa.
+*   Implementar **testes de dados** no dbt para garantir a qualidade e a integridade dos nossos modelos.
+*   Integrar a execução do dbt como um novo bloco no nosso pipeline do Mage.
+

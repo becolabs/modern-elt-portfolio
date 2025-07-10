@@ -2,3 +2,6 @@ hubspot-api-client==8.1.0
 Faker==4.14.0
 # Adicionar ao requirements.txt
 mage-ai==0.9.68
+numpy<2.0
+dbt-core==1.7.13
+dbt-duckdb==1.7.2
