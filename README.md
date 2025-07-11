@@ -106,11 +106,6 @@ Estes passos permitem replicar o ambiente de desenvolvimento e popular o HubSpot
     ```
     *   Acesse a interface do Mage em `http://localhost:6789`.
 
-Excelente ideia. Um bom README é um documento vivo que reflete o estado atual do projeto. Atualizá-lo agora é a atitude correta de um engenheiro que se orgulha do seu trabalho.
-
-Vamos substituir a seção "Próximos Passos" por uma descrição do que **concluímos** e, em seguida, criar uma nova seção "Próximos Passos" para a Fase III. Também adicionaremos uma seção de "Lições Aprendidas", que é extremamente valiosa para um portfólio, pois demonstra sua capacidade de resolver problemas do mundo real.
-
-Aqui está a sugestão de atualização para o seu `README.md`.
 
 ---
 
