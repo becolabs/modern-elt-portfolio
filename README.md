@@ -198,11 +198,3 @@ Com a camada de staging (Silver) concluída e validada, nosso próximo objetivo 
 *   Implementar testes de dados no dbt (singular, de relacionamento, e personalizados) para garantir a qualidade e a integridade dos nossos modelos.
 *   Integrar a execução do dbt como um novo bloco no nosso pipeline do Mage para orquestrar o processo de ponta a ponta.
 
----
-
-**Por que esta atualização é boa:**
-
-*   **Usa a Linguagem do Mercado:** Termos como "Camada Silver", "separação de preocupações", "Engenharia Analítica", "idempotente" e "Data Lake" mostram que você entende os conceitos por trás das ferramentas.
-*   **Mostra Resolução de Problemas:** Mencionar explicitamente a depuração de locks e a adição de uma propriedade personalizada transforma um simples projeto em uma história de engenharia do mundo real.
-*   **Foca no "Porquê":** Explica *por que* uma camada de staging é importante e *por que* convertemos tipos de dados.
-*   **Define Claramente o Futuro:** Deixa o leitor ansioso pela próxima fase, onde a "mágica" do negócio acontece.
