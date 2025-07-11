@@ -3,127 +3,111 @@ from faker import Faker
 import random
 import numpy as np
 
-# --- CONFIGURAÇÃO ---
-NUM_DOCTORS = 20
-NUM_PATIENTS = 50
-NUM_DEALS = 100
-DUPLICATE_PATIENTS_COUNT = 3
-PATIENTS_WITH_MISSING_LASTNAME = 5
-DEALS_WITHOUT_DOCTOR = 10
+# --- CONFIGURAÇÃO DA SIMULAÇÃO ---
+NUM_DOCTORS = 10  # Um grupo menor e mais realista de médicos
+NUM_UNIQUE_PATIENTS = 80 # Número de pacientes distintos
+TOTAL_DEALS = 100 # Total de negócios a serem gerados
+# Implícito: 20 negócios serão de pacientes recorrentes
 
 # Inicializa o Faker
 fake = Faker('pt_BR')
 
 def generate_doctors(num_doctors):
     """Gera dados fictícios para médicos (HubSpot Companies)."""
-    specialties = ['Neurologia', 'Cardiologia', 'Clínico Geral', 'Psiquiatria', 'Ortopedia', 'Neuro'] # 'Neuro' é um erro proposital
+    specialties = ['Neurologia', 'Cardiologia', 'Clínico Geral', 'Psiquiatria', 'Ortopedia', 'Neuro']
     data = []
     for _ in range(num_doctors):
         name = fake.name_male()
-        # Erro Proposital 1: Formatação inconsistente na especialidade
-        industry = random.choice(specialties) if random.random() > 0.1 else 'Cardiologia'
-        
         data.append({
             'name': f"Dr(a). {name}",
-            'domain': f"{name.split(' ')[-1].lower()}.med.br",
-            'especialidade_medica': industry
+            'domain': f"{name.split(' ')[-1].lower().replace('.', '')}.med.br",
+            'especialidade_medica': random.choice(specialties)
         })
-    
-    # Erro Proposital 2: Duplicata de Médico
-    if num_doctors > 0:
-        data.append(data[0])
-
     return pd.DataFrame(data)
 
 def generate_patients(num_patients):
     """Gera dados fictícios para pacientes (HubSpot Contacts)."""
     data = []
-    for i in range(num_patients):
+    for _ in range(num_patients):
         first_name = fake.first_name()
         last_name = fake.last_name()
-        
-        # Erro Proposital 3: Dados Faltando (sobrenome)
-        if i < PATIENTS_WITH_MISSING_LASTNAME:
-            last_name = None
-            
         sanitized_first_name = first_name.lower().replace(' ', '.')
-
-        # 2. Constrói o email de forma segura, tratando o caso de sobrenome nulo.
-        if last_name:
-            # Sanitiza o sobrenome da mesma forma.
-            sanitized_last_name = last_name.lower().replace(' ', '.')
-            email = f"{sanitized_first_name}.{sanitized_last_name}@{fake.free_email_domain()}"
-        else:
-            # Se não há sobrenome, usa apenas o primeiro nome sanitizado.
-            # O email será válido. Ex: "marcos.vinicius@domain.com"
-            email = f"{sanitized_first_name}@{fake.free_email_domain()}"
-        # --- FIM DA CORREÇÃO ---
-
+        sanitized_last_name = last_name.lower().replace(' ', '.')
+        email = f"{sanitized_first_name}.{sanitized_last_name}@{fake.free_email_domain()}"
         data.append({
             'firstname': first_name,
             'lastname': last_name,
             'email': email
         })
-        
-    # Erro Proposital 4: Duplicatas de Pacientes
-    for i in range(DUPLICATE_PATIENTS_COUNT):
-        if data:
-            data.append(data[i])
-            
     return pd.DataFrame(data)
 
-def generate_deals(num_deals, df_doctors, df_patients):
+def generate_connected_data(num_doctors, num_unique_patients, total_deals):
     """
-    Gera dados fictícios para negócios (HubSpot Deals), usando as etapas reais do funil
-    e simulando uma distribuição de funil mais realista.
+    Orquestra a geração de dados conectados, garantindo que deals se refiram
+    a doctors e patients existentes e simulando recorrência.
     """
-    # --- MUDANÇA PRINCIPAL AQUI ---
-    # Usando as etapas reais extraídas da interface do HubSpot
+    print("1. Gerando Médicos (Companies)...")
+    df_doctors = generate_doctors(num_doctors)
+    
+    print("2. Gerando Pacientes (Contacts)...")
+    df_patients = generate_patients(num_unique_patients)
+
+    print("3. Orquestrando Negócios (Deals) com recorrência...")
+    
+    # --- Lógica de Recorrência ---
+    num_recurring_deals = total_deals - num_unique_patients
+    
+    # Lista de todos os pacientes que terão um deal
+    patient_list_for_deals = df_patients['email'].tolist()
+    
+    # Adiciona pacientes recorrentes escolhendo aleatoriamente da lista existente
+    recurring_patients = random.choices(patient_list_for_deals, k=num_recurring_deals)
+    patient_list_for_deals.extend(recurring_patients)
+    
+    # Embaralha a lista final para que os deals recorrentes não fiquem no final
+    random.shuffle(patient_list_for_deals)
+    
+    # --- Geração dos Deals ---
     REAL_DEAL_STAGES = [
-        'Compromisso agendado',
-        'Qualificado para comprar',
-        'Apresentação agendada',
-        'Tomador de decisão envolvido',
-        'Contrato enviado',
-        'Negócio fechado',
-        'Negócio perdido'
+        'Compromisso agendado', 'Qualificado para comprar', 'Apresentação agendada',
+        'Tomador de decisão envolvido', 'Contrato enviado', 'Negócio fechado', 'Negócio perdido'
     ]
+    stage_weights = [20, 18, 15, 12, 10, 8, 17]
+    deals_data = []
 
-    # Simula um funil: mais negócios no topo, menos no fundo.
-    # Os pesos não precisam somar 1. Eles são relativos.
-    stage_weights = [20, 18, 15, 12, 10, 8, 17] # Mais peso no início e em "perdido"
+    # Dicionários para busca rápida em vez de usar .loc em um loop (mais performático)
+    patients_dict = df_patients.set_index('email').to_dict('index')
+    doctors_list = df_doctors.to_dict('records')
 
-    data = []
-
-    if df_patients.empty or df_doctors.empty:
-        return pd.DataFrame()
-
-    for i in range(num_deals):
-        patient = df_patients.sample(1).iloc[0]
-        doctor = df_doctors.sample(1).iloc[0]
-
-        company_domain = doctor['domain'] if i >= DEALS_WITHOUT_DOCTOR else None
-
-        # Usa random.choices para selecionar uma etapa com base nos pesos definidos
+    for patient_email in patient_list_for_deals:
+        # Associa um médico aleatório a cada deal
+        doctor = random.choice(doctors_list)
+        patient_firstname = patients_dict[patient_email]['firstname']
+        
         chosen_stage = random.choices(REAL_DEAL_STAGES, weights=stage_weights, k=1)[0]
 
-        data.append({
-            'dealname': f"Atendimento - {patient['firstname']}",
+        deals_data.append({
+            'dealname': f"Atendimento - {patient_firstname}",
             'amount': round(random.uniform(100, 800), 2),
             'pipeline': 'Pipeline de vendas',
-            'dealstage': chosen_stage, # <-- Usando a etapa real do funil
-            'contact_email': patient['email'],
-            'company_domain': company_domain
+            'dealstage': chosen_stage,
+            # Chaves de associação que serão usadas no mapeamento do HubSpot
+            'contact_email': patient_email,
+            'associated_company_domain': doctor['domain']
         })
-
-    return pd.DataFrame(data)
+        
+    df_deals = pd.DataFrame(deals_data)
+    
+    return df_doctors, df_patients, df_deals
 
 if __name__ == "__main__":
-    print("Gerando dados fictícios...")
+    print("Iniciando a geração de dados de negócio simulados e conectados...")
     
-    df_doctors = generate_doctors(NUM_DOCTORS)
-    df_patients = generate_patients(NUM_PATIENTS)
-    df_deals = generate_deals(NUM_DEALS, df_doctors, df_patients)
+    df_doctors, df_patients, df_deals = generate_connected_data(
+        NUM_DOCTORS, 
+        NUM_UNIQUE_PATIENTS, 
+        TOTAL_DEALS
+    )
     
     # Salva em arquivos CSV prontos para importação
     df_doctors.to_csv('import_companies.csv', index=False)
@@ -135,11 +119,8 @@ if __name__ == "__main__":
     print(f"Pacientes (Contacts): {len(df_patients)} registros salvos em 'import_contacts.csv'")
     print(f"Negócios (Deals): {len(df_deals)} registros salvos em 'import_deals.csv'")
     
-    print("\n--- Problemas de Qualidade Injetados ---")
-    print(f"-> {len(df_doctors[df_doctors.duplicated()])} Médico(s) duplicado(s).")
-    print(f"-> Formatos de especialidade inconsistentes (ex: 'Neurologia' vs 'Neuro').")
-    print(f"-> {DUPLICATE_PATIENTS_COUNT} Paciente(s) duplicado(s).")
-    print(f"-> {PATIENTS_WITH_MISSING_LASTNAME} Paciente(s) com sobrenome faltando.")
-    print(f"-> {DEALS_WITHOUT_DOCTOR} Negócio(s) sem médico associado.")
+    num_recurring = len(df_deals) - len(df_deals['contact_email'].unique())
+    print(f"\n-> Simulação de Recorrência: {len(df_deals)} deals para {len(df_patients)} pacientes únicos ({num_recurring} deals recorrentes).")
+    print("-> Cada deal está conectado a um paciente e a um médico.")
     
     print("\nPróximo passo: Importe os arquivos CSV para o HubSpot na seguinte ordem: 1. companies, 2. contacts, 3. deals.")

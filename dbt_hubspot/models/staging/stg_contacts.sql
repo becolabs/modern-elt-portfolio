@@ -13,16 +13,16 @@ renamed as (
         id as contact_id,
         
         -- Propriedades do Contato (usando os nomes corretos com aspas duplas)
-        "properties.firstname" as first_name,
-        "properties.lastname" as last_name,
-        "properties.email" as email,
+        "firstname" as first_name,
+        "lastname" as last_name,
+        "email" as email,
         
         -- Timestamps (convertendo de VARCHAR para TIMESTAMP)
-        cast("properties.createdate" as timestamp) as created_at,
-        cast("properties.lastmodifieddate" as timestamp) as last_modified_at,
+        cast("createdate" as timestamp) as created_at,
+        cast("lastmodifieddate" as timestamp) as last_modified_at,
         
         -- Propriedade de negócio importante
-        "properties.lifecyclestage" as lifecycle_stage
+        "lifecyclestage" as lifecycle_stage
 
     from source
 

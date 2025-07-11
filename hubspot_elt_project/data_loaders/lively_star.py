@@ -12,48 +12,84 @@ if 'data_loader' not in globals():
 if 'test' not in globals():
     from mage_ai.data_preparation.decorators import test
 
+# --- Função para extrair as propriedades do dicionario gerado na api do hubspot
+def flatten_records(records):
+    """
+    Recebe uma lista de objetos SimplePublicObject do HubSpot e a achata
+    para uma lista de dicionários planos.
+    """
+    if not records:
+        return []
+        
+    flat_list = []
+    for record in records: # 'record' aqui é um objeto, não um dicionário
+        # Começamos com uma cópia do dicionário de propriedades do objeto
+        flat_record = record.properties.copy()
+        
+        # Adicionamos os atributos do nível superior do objeto
+        flat_record['id'] = record.id
+        flat_record['created_at'] = record.created_at
+        flat_record['updated_at'] = record.updated_at
+        flat_record['archived'] = record.archived
+        
+        # Verificamos se o objeto tem associações e as processamos
+        if hasattr(record, 'associations') and record.associations:
+            # Acessamos as associações como atributos do objeto
+            associations = record.associations
+            if 'companies' in associations:
+                # Acessamos a lista de resultados e pegamos a ID do primeiro
+                if associations['companies'].results:
+                    flat_record['associated_company_id'] = associations['companies'].results[0].id
+            if 'contacts' in associations:
+                if associations['contacts'].results:
+                    flat_record['associated_contact_id'] = associations['contacts'].results[0].id
+
+        flat_list.append(flat_record)
+        
+    return flat_list
+
 
 # --- Função de Paginação Reutilizável ---
-def get_all_records(api_client, object_type, properties):
+def get_all_records(client, object_type, properties, associations=None):
     """
-    Busca todos os registros para um determinado tipo de objeto do HubSpot,
-    lidando com a paginação automaticamente.
+    Busca todos os registros de um objeto do HubSpot, com suporte opcional para associações.
     """
-    all_records = []
+    records = []
     after = None
     
-    api_map = {
-        'contacts': api_client.crm.contacts.basic_api,
-        'companies': api_client.crm.companies.basic_api,
-        'deals': api_client.crm.deals.basic_api
-    }
-
-    if object_type not in api_map:
-        raise ValueError(f"Tipo de objeto inválido: {object_type}")
-
-    api_instance = api_map[object_type]
-
     while True:
         try:
-            page = api_instance.get_page(
-                limit=100,
-                after=after,
-                properties=properties,
-                archived=False
-            )
+            # --- MUDANÇA PRINCIPAL AQUI ---
+            # Agora, a função pode lidar com 'properties' e 'associations'.
+            if associations:
+                page = client.crm.objects.basic_api.get_page(
+                    object_type,
+                    limit=100,
+                    after=after,
+                    properties=properties,
+                    associations=associations  # Passa o parâmetro de associações
+                )
+            else:
+                page = client.crm.objects.basic_api.get_page(
+                    object_type,
+                    limit=100,
+                    after=after,
+                    properties=properties
+                )
             
-            if page.results:
-                all_records.extend(result.to_dict() for result in page.results)
-
+            records.extend(page.results)
+            
             if page.paging and page.paging.next:
                 after = page.paging.next.after
             else:
                 break
-        except ApiException as e:
-            print(f"Exceção ao chamar a API de {object_type}: {e}\n")
+        except Exception as e:
+            print(f"Erro ao buscar dados para {object_type}: {e}")
             break
             
-    return all_records
+    
+    
+    return records
 
 
 # --- Ponto de Entrada do Bloco Mage ---
@@ -77,31 +113,64 @@ def load_data_from_hubspot(*args, **kwargs):
     client = hubspot.Client.create(access_token=access_token)
 
     # Define as propriedades a serem extraídas, conforme a Tabela 1 do nosso documento.
-    contact_properties = ["email", "firstname", "lastname", "createdate", "lifecyclestage", "hs_object_id"]
-    company_properties = ["domain", "name", "createdate", "especialidade_medica", "hs_object_id"]
-    deal_properties = ["dealname", "amount", "closedate", "createdate", "pipeline", "dealstage", "hs_object_id"]
+    # Substitua as listas de propriedades antigas por estas:
+    contact_properties = [
+        "email", 
+        "firstname", 
+        "lastname", 
+        "createdate", 
+        "lifecyclestage", 
+        "lastmodifieddate"
+    ]
+
+    company_properties = [
+        "domain", 
+        "name", 
+        "createdate", 
+        "especialidade_medica", 
+        "hs_lastmodifieddate"
+    ]
+
+    deal_properties = [
+        "dealname", 
+        "amount", 
+        "closedate", 
+        "createdate", 
+        "pipeline", 
+        "dealstage", 
+        "hs_lastmodifieddate",
+        "company_domain",
+        "contact_email"
+    ]
 
     print("Iniciando extração do HubSpot...")
 
-    contacts_data = get_all_records(client, 'contacts', contact_properties)
-    companies_data = get_all_records(client, 'companies', company_properties)
-    deals_data = get_all_records(client, 'deals', deal_properties)
+    # 1. Extrair os dados brutos
+    raw_contacts = get_all_records(client, 'contacts', contact_properties)
+    raw_companies = get_all_records(client, 'companies', company_properties)
+    raw_deals = get_all_records(client, 'deals', deal_properties, associations=['company', 'contact'])
 
-    # Converte os resultados em DataFrames do Pandas, achatando a estrutura JSON.
-    df_contacts = pd.json_normalize(contacts_data)
-    df_companies = pd.json_normalize(companies_data)
-    df_deals = pd.json_normalize(deals_data)
+    print(f"Contatos extraídos: {len(raw_contacts)}")
+    print(f"Empresas extraídas: {len(raw_companies)}")
+    print(f"Negócios extraídos: {len(raw_deals)}")
+
     
-    print(f"Contatos extraídos: {len(df_contacts)}")
-    print(f"Empresas extraídas: {len(df_companies)}")
-    print(f"Negócios extraídos: {len(df_deals)}")
+
+    # 2. Achatar os dados usando nossa nova função
+    contacts_data = flatten_records(raw_contacts)
+    companies_data = flatten_records(raw_companies)
+    deals_data = flatten_records(raw_deals)
+
+    # 3. Criar o dicionário de DataFrames para o Mage
+    # Agora o Pandas receberá uma lista de dicionários planos e funcionará perfeitamente.
+    data = {
+        'contacts': pd.DataFrame(contacts_data),
+        'companies': pd.DataFrame(companies_data),
+        'deals': pd.DataFrame(deals_data)
+    }
 
     # Retorna um dicionário de DataFrames para o próximo bloco.
-    return {
-        'contacts': df_contacts,
-        'companies': df_companies,
-        'deals': df_deals
-    }
+    return data
 
 
 @test
