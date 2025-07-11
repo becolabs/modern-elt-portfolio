@@ -1,0 +1,42 @@
+[0m17:41:56.353902 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7a1488937850>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7a148636fb80>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7a148636fb20>]}
+
+
+============================== 17:41:56.357766 | 47698671-e8dd-4af8-a94e-d1276fb7e596 ==============================
+[0m17:41:56.357766 [info ] [MainThread]: Running with dbt=1.7.13
+[0m17:41:56.358311 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'log_cache_events': 'False', 'write_json': 'True', 'partial_parse': 'True', 'cache_selected_only': 'False', 'profiles_dir': '/home/marcos/.dbt', 'fail_fast': 'False', 'debug': 'False', 'log_path': 'logs', 'warn_error': 'None', 'version_check': 'True', 'use_colors': 'True', 'use_experimental_parser': 'False', 'no_print': 'None', 'quiet': 'False', 'warn_error_options': 'WarnErrorOptions(include=[], exclude=[])', 'introspect': 'True', 'log_format': 'default', 'invocation_command': 'dbt init dbt_hubspot', 'target_path': 'None', 'static_parser': 'True', 'send_anonymous_usage_stats': 'True'}
+[0m17:41:56.358766 [warn ] [MainThread]: [ConfigFolderDirectory]: Unable to parse dict {'dir': PosixPath('/home/marcos/.dbt')}
+[0m17:41:56.359143 [info ] [MainThread]: Creating dbt configuration folder at 
+[0m17:41:56.361433 [info ] [MainThread]: A project called dbt_hubspot already exists here.
+[0m17:41:56.362707 [debug] [MainThread]: Resource report: {"command_name": "init", "command_success": true, "command_wall_clock_time": 0.013754083, "process_user_time": 1.489196, "process_kernel_time": 0.201041, "process_mem_max_rss": "94856", "process_in_blocks": "40704", "process_out_blocks": "8"}
+[0m17:41:56.363148 [debug] [MainThread]: Command `dbt init` succeeded at 17:41:56.363022 after 0.01 seconds
+[0m17:41:56.363515 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7a1488937850>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7a148aa7b820>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7a148636fdf0>]}
+[0m17:41:56.363920 [debug] [MainThread]: Flushing usage events
+[0m17:42:19.296209 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7c0a03d67880>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7c0a0178bbe0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7c0a0178bb80>]}
+
+
+============================== 17:42:19.298890 | c2f863c6-c42c-4864-9e62-e4df13064b4c ==============================
+[0m17:42:19.298890 [info ] [MainThread]: Running with dbt=1.7.13
+[0m17:42:19.299394 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'log_cache_events': 'False', 'write_json': 'True', 'partial_parse': 'True', 'cache_selected_only': 'False', 'profiles_dir': '/home/marcos/.dbt', 'fail_fast': 'False', 'warn_error': 'None', 'log_path': 'logs', 'version_check': 'True', 'debug': 'False', 'use_colors': 'True', 'use_experimental_parser': 'False', 'no_print': 'None', 'quiet': 'False', 'warn_error_options': 'WarnErrorOptions(include=[], exclude=[])', 'invocation_command': 'dbt init dbt_hubspot', 'introspect': 'True', 'static_parser': 'True', 'target_path': 'None', 'log_format': 'default', 'send_anonymous_usage_stats': 'True'}
+[0m17:42:19.300142 [debug] [MainThread]: Starter project path: /home/marcos/projects/modern_elt/venv/lib/python3.10/site-packages/dbt/include/starter_project
+[0m17:42:19.312462 [info ] [MainThread]: 
+Your new dbt project "dbt_hubspot" was created!
+
+For more information on how to configure the profiles.yml file,
+please consult the dbt documentation here:
+
+  https://docs.getdbt.com/docs/configure-your-profile
+
+One more thing:
+
+Need help? Don't hesitate to reach out to us via GitHub issues or on Slack:
+
+  https://community.getdbt.com/
+
+Happy modeling!
+
+[0m17:42:19.313012 [info ] [MainThread]: Setting up your profile.
+[0m17:42:23.199830 [info ] [MainThread]: Profile dbt_hubspot written to /home/marcos/.dbt/profiles.yml using target's sample configuration. Once updated, you'll be able to start developing with dbt.
+[0m17:42:23.200804 [debug] [MainThread]: Resource report: {"command_name": "init", "command_success": true, "command_wall_clock_time": 6.40189, "process_user_time": 1.524719, "process_kernel_time": 0.141918, "process_mem_max_rss": "108564", "process_in_blocks": "3072", "process_out_blocks": "72"}
+[0m17:42:23.201266 [debug] [MainThread]: Command `dbt init` succeeded at 17:42:23.201135 after 6.40 seconds
+[0m17:42:23.201621 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7c0a03d67880>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7c0a05ecf820>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7c0a0178bbb0>]}
+[0m17:42:23.202009 [debug] [MainThread]: Flushing usage events

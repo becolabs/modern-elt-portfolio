@@ -78,7 +78,7 @@ def load_data_from_hubspot(*args, **kwargs):
 
     # Define as propriedades a serem extraídas, conforme a Tabela 1 do nosso documento.
     contact_properties = ["email", "firstname", "lastname", "createdate", "lifecyclestage", "hs_object_id"]
-    company_properties = ["domain", "name", "createdate", "industry", "hs_object_id"]
+    company_properties = ["domain", "name", "createdate", "especialidade_medica", "hs_object_id"]
     deal_properties = ["dealname", "amount", "closedate", "createdate", "pipeline", "dealstage", "hs_object_id"]
 
     print("Iniciando extração do HubSpot...")

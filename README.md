@@ -157,14 +157,52 @@ A implementação revelou vários desafios práticos e lições valiosas sobre o
     *   **Transferência de Dados:** O Mage converte DataFrames do Pandas para listas Python ao passá-los entre blocos. A solução foi reconverter a lista de volta para um DataFrame no bloco receptor.
 *   **Carregamento de Segredos:** O mecanismo padrão `io_config.yaml` se mostrou instável. A solução mais robusta foi carregar o `.env` manualmente no código usando a biblioteca `python-dotenv`, uma abordagem que é segura e também compatível com ambientes de produção na nuvem.
 
-### Próximos Passos: Fase III - Transformação com dbt
+### Fase III: Transformação e Modelagem (Camada Silver) - `CONCLUÍDO`
 
-Com os dados brutos carregados, a próxima fase se concentrará em transformá-los em insights acionáveis usando o dbt (data build tool).
+Nesta fase, demos vida aos dados brutos, transformando-os em ativos de dados limpos, confiáveis e prontos para análise. Utilizamos o **dbt (data build tool)** para construir nossa camada de transformação, seguindo as melhores práticas de Engenharia Analítica.
 
-*   Inicializar um projeto dbt dentro da nossa estrutura de projeto Mage.
-*   Configurar a conexão do dbt para ler e escrever no nosso arquivo `hubspot_raw.db`.
-*   Construir modelos de **staging** para limpar, renomear e padronizar os dados brutos.
-*   Desenvolver modelos de **marts** (tabelas de fatos e dimensões) para criar uma visão de negócio coesa.
-*   Implementar **testes de dados** no dbt para garantir a qualidade e a integridade dos nossos modelos.
-*   Integrar a execução do dbt como um novo bloco no nosso pipeline do Mage.
+#### Arquitetura e Configuração
 
+*   **Inicialização do Projeto dbt:** Um novo projeto dbt (`dbt_hubspot`) foi inicializado na raiz do repositório, mantendo uma clara **separação de preocupações** entre a ferramenta de EL (Mage) e a ferramenta de T (dbt).
+*   **Conexão com o Data Lake Local:** O dbt foi configurado para se conectar diretamente ao nosso banco de dados DuckDB (`hubspot_raw.db`), que atua como nosso Data Lake na camada Bronze. A configuração, gerenciada via `profiles.yml`, foi mantida fora do controle de versão para proteger credenciais, enquanto o caminho para o banco de dados foi definido de forma relativa para garantir a portabilidade do projeto.
+*   **Ciclo de Desenvolvimento e Depuração:** Foi estabelecido um fluxo de trabalho de desenvolvimento robusto. Um notebook Jupyter (`playground.ipynb`), utilizando o kernel do ambiente virtual do projeto (`venv`), foi configurado para a exploração interativa dos dados. Esse processo se mostrou crucial para:
+    *   Inspecionar a estrutura real das tabelas brutas.
+    *   Identificar a necessidade de adicionar propriedades personalizadas do HubSpot (`especialidade_medica`) ao pipeline de extração.
+    *   Depurar e resolver problemas de concorrência de banco de dados (locks de arquivo) entre o notebook de exploração e os processos de execução (Mage/dbt).
+
+#### Modelagem da Camada de Staging
+
+O coração desta fase foi a criação da camada de *staging*. O objetivo desta camada é criar uma representação 1:1 das fontes de dados brutas, aplicando apenas limpezas básicas e padronizações. Isso isola o resto do nosso projeto da complexidade e inconsistência dos dados de origem.
+
+Foram criados três modelos de staging como `views` no DuckDB:
+
+1.  **`stg_contacts`**:
+    *   Renomeia colunas como `properties.firstname` para `first_name`.
+    *   Converte (cast) campos de data de `VARCHAR` para `TIMESTAMP`.
+    *   Seleciona apenas as colunas relevantes para a análise.
+
+2.  **`stg_companies`**:
+    *   Similarmente, renomeia e padroniza colunas.
+    *   Inclui a propriedade personalizada `especialidade_medica`, demonstrando a capacidade do pipeline de se adaptar a novos requisitos de negócio.
+
+3.  **`stg_deals`**:
+    *   Além da renomeação e casting de datas, converte a coluna `properties.amount` para o tipo `NUMERIC`, habilitando cálculos financeiros precisos nas fases seguintes.
+
+A construção de toda a camada de staging é orquestrada com um único comando, `dbt build --select staging.*`, garantindo que todos os modelos sejam executados e testados de forma coesa.
+
+### Próximos Passos: Fase IV - Modelagem de Data Marts e Testes
+
+Com a camada de staging (Silver) concluída e validada, nosso próximo objetivo é construir a camada de **Marts** (Gold). É aqui que a lógica de negócio será implementada para criar as tabelas de fatos e dimensões que responderão diretamente às nossas perguntas de negócio e servirão de base para o cálculo da métrica LTV:CAC.
+
+*   Desenvolver modelos de marts (tabelas de fatos e dimensões) para criar uma visão de negócio coesa.
+*   Implementar testes de dados no dbt (singular, de relacionamento, e personalizados) para garantir a qualidade e a integridade dos nossos modelos.
+*   Integrar a execução do dbt como um novo bloco no nosso pipeline do Mage para orquestrar o processo de ponta a ponta.
+
+---
+
+**Por que esta atualização é boa:**
+
+*   **Usa a Linguagem do Mercado:** Termos como "Camada Silver", "separação de preocupações", "Engenharia Analítica", "idempotente" e "Data Lake" mostram que você entende os conceitos por trás das ferramentas.
+*   **Mostra Resolução de Problemas:** Mencionar explicitamente a depuração de locks e a adição de uma propriedade personalizada transforma um simples projeto em uma história de engenharia do mundo real.
+*   **Foca no "Porquê":** Explica *por que* uma camada de staging é importante e *por que* convertemos tipos de dados.
+*   **Define Claramente o Futuro:** Deixa o leitor ansioso pela próxima fase, onde a "mágica" do negócio acontece.

@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: hubspot_raw_data # Um nome para agrupar nossas fontes do HubSpot
+    # O dbt usará a conexão definida no profiles.yml
+    # O DuckDB, por padrão, cria tudo no schema 'main'
+    schema: main 
+    tables:
+      - name: contacts
+      - name: companies
+      - name: deals
