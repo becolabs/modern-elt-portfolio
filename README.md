@@ -201,14 +201,48 @@ Este conjunto de testes é executado a cada `dbt test`, fornecendo um feedback i
     ```
     *Este comando irá rodar os modelos e, em seguida, os testes, em uma única execução.*
 
-### Próximos Passos
+### Fase V: Visualização e Análise de Negócio (CONCLUÍDO)
 
-Com o pipeline de dados local totalmente funcional e testado, o projeto está pronto para a próxima grande fase: **implantação na nuvem e automação**.
+Com um Data Mart (`mart_companies`) robusto e testado, a etapa final do ciclo de dados local foi dar vida a esses números. O objetivo era criar uma interface visual para que stakeholders pudessem explorar os dados e extrair insights sem precisar escrever uma única linha de SQL.
 
-*   **Containerização:** "Dockerizar" as aplicações Mage e dbt para criar ambientes portáteis e reprodutíveis.
-*   **Infraestrutura como Código (IaC):** Usar **Terraform** para provisionar a infraestrutura necessária na **AWS** (ex: S3 para o Data Lake, ECR para as imagens Docker, ECS Fargate para a execução dos containers).
-*   **CI/CD:** Criar um pipeline de Integração e Entrega Contínua (provavelmente com GitHub Actions) para automatizar o teste e o deploy de novas versões do pipeline de dados.
+#### Ferramenta e Implementação
+
+*   **Business Intelligence (BI):** Foi utilizado o **Metabase**, uma ferramenta de BI open-source, por sua leveza e capacidade de se conectar diretamente a bancos de dados DuckDB.
+*   **Ambiente de Execução:** Para contornar uma limitação da imagem Docker padrão do Metabase, foi construída uma **imagem Docker customizada** (`metabase-com-duckdb:latest`). Essa nova imagem, baseada em Debian, inclui o driver necessário para o DuckDB, demonstrando uma solução de problemas prática e comum em ambientes de produção.
+*   **Conexão de Dados:** O container do Metabase foi configurado para montar o diretório do projeto local, permitindo que ele lesse o arquivo `hubspot_raw.db` e, consequentemente, todas as tabelas e views criadas pelo dbt.
+
+#### Dashboard de KPIs
+
+Foi construído um dashboard chamado "KPI's do CRM HubSpot para uma Clínica", que centraliza as métricas mais importantes e responde a perguntas de negócio cruciais:
+
+
+![Dashboard de KPIs do HubSpot](/home/marcos/projects/modern_elt/images/imagem1.png)
+
+O dashboard revela insights como:
+*   **Receita por Médico (LTV):** Identifica claramente os médicos mais valiosos para o negócio.
+*   **Volume de Atendimentos por Especialidade:** Mostra quais especialidades médicas geram mais volume de leads.
+*   **Taxa de Conversão por Médico:** Compara o total de negócios com os negócios efetivamente ganhos, permitindo uma análise de eficiência.
+
+A conclusão desta fase valida o pipeline de ponta a ponta: desde a extração de dados brutos até a geração de um dashboard interativo que suporta a tomada de decisão estratégica.
 
 ---
 
+### Próximos Passos (Atualizado)
 
+Com o ciclo de desenvolvimento local completo e validado, o projeto agora se move para a fase de **industrialização e automação na nuvem**. O objetivo é transformar nosso pipeline local em um sistema de produção robusto, escalável e de baixa manutenção na AWS.
+
+*   **Fase VI: Containerização (Docker):**
+    *   Criar um `Dockerfile` para a aplicação **Mage**, empacotando o código, as dependências e a configuração do pipeline de EL.
+    *   Criar um `Dockerfile` para o projeto **dbt**, empacotando os modelos, testes e configurações para a execução da transformação de forma isolada.
+
+*   **Fase VII: Infraestrutura como Código (Terraform & AWS):**
+    *   Escrever código **Terraform** para provisionar toda a infraestrutura necessária na AWS, incluindo:
+        *   **Amazon S3:** Para atuar como nosso Data Lake, armazenando os dados brutos extraídos.
+        *   **Amazon ECR (Elastic Container Registry):** Para armazenar nossas imagens Docker do Mage e dbt.
+        *   **Amazon ECS (Elastic Container Service) com Fargate:** Para executar nossos containers Mage e dbt sem a necessidade de gerenciar servidores.
+        *   **AWS Secrets Manager:** Para armazenar de forma segura as credenciais da API do HubSpot.
+
+*   **Fase VIII: Orquestração e CI/CD (GitHub Actions):**
+    *   Criar um workflow de **GitHub Actions** que automatize o processo de ponta a ponta:
+        *   **CI (Integração Contínua):** A cada `push` para o repositório, rodar os testes do dbt contra um ambiente de desenvolvimento para garantir que não há regressões.
+        *   **CD (Entrega Contínua):** Em um `merge` para a branch `main`, automaticamente construir e publicar as novas imagens Docker no ECR e atualizar os serviços no ECS, implantando a nova versão do pipeline.

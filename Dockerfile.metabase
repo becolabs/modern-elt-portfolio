@@ -1,0 +1,28 @@
+# Dockerfile.metabase
+
+# Usar uma imagem base Debian com Java pré-instalado
+FROM openjdk:11-jre-slim
+
+# Definir variáveis de ambiente para as versões
+ENV MB_VERSION=v0.49.13
+ENV DUCKDB_DRIVER_VERSION=0.4.0
+ENV MB_PLUGINS_DIR=/plugins
+
+# Criar o diretório de plugins
+RUN mkdir -p ${MB_PLUGINS_DIR}
+
+# Baixar o Metabase.jar e o driver do DuckDB
+ADD https://downloads.metabase.com/${MB_VERSION}/metabase.jar /app/metabase.jar
+
+# --- CORREÇÃO AQUI ---
+# Usando a URL exata que você encontrou, sem o 'v' na versão do driver.
+ADD https://github.com/motherduckdb/metabase_duckdb_driver/releases/download/${DUCKDB_DRIVER_VERSION}/duckdb.metabase-driver.jar ${MB_PLUGINS_DIR}/duckdb.jar
+
+# Definir o diretório de trabalho
+WORKDIR /app
+
+# Expor a porta padrão do Metabase
+EXPOSE 3000
+
+# Comando para iniciar o Metabase
+CMD ["java", "-jar", "metabase.jar"]
