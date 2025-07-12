@@ -152,44 +152,63 @@ A implementação revelou vários desafios práticos e lições valiosas sobre o
     *   **Transferência de Dados:** O Mage converte DataFrames do Pandas para listas Python ao passá-los entre blocos. A solução foi reconverter a lista de volta para um DataFrame no bloco receptor.
 *   **Carregamento de Segredos:** O mecanismo padrão `io_config.yaml` se mostrou instável. A solução mais robusta foi carregar o `.env` manualmente no código usando a biblioteca `python-dotenv`, uma abordagem que é segura e também compatível com ambientes de produção na nuvem.
 
-### Fase III: Transformação e Modelagem (Camada Silver) - `CONCLUÍDO`
+### Fase III e IV: Transformação, Testes e Modelagem de Negócio (CONCLUÍDO)
 
-Nesta fase, demos vida aos dados brutos, transformando-os em ativos de dados limpos, confiáveis e prontos para análise. Utilizamos o **dbt (data build tool)** para construir nossa camada de transformação, seguindo as melhores práticas de Engenharia Analítica.
+Nesta fase crucial, o projeto evolui da simples posse de dados brutos para a criação de **ativos de dados confiáveis e prontos para análise**. Utilizamos o **dbt (data build tool)** para construir uma pipeline de transformação robusta, seguindo as melhores práticas de Engenharia Analítica e adotando uma mentalidade de **Desenvolvimento Orientado a Testes (TDD)** desde o início.
 
-#### Arquitetura e Configuração
+#### Arquitetura da Transformação
 
-*   **Inicialização do Projeto dbt:** Um novo projeto dbt (`dbt_hubspot`) foi inicializado na raiz do repositório, mantendo uma clara **separação de preocupações** entre a ferramenta de EL (Mage) e a ferramenta de T (dbt).
-*   **Conexão com o Data Lake Local:** O dbt foi configurado para se conectar diretamente ao nosso banco de dados DuckDB (`hubspot_raw.db`), que atua como nosso Data Lake na camada Bronze. A configuração, gerenciada via `profiles.yml`, foi mantida fora do controle de versão para proteger credenciais, enquanto o caminho para o banco de dados foi definido de forma relativa para garantir a portabilidade do projeto.
-*   **Ciclo de Desenvolvimento e Depuração:** Foi estabelecido um fluxo de trabalho de desenvolvimento robusto. Um notebook Jupyter (`playground.ipynb`), utilizando o kernel do ambiente virtual do projeto (`venv`), foi configurado para a exploração interativa dos dados. Esse processo se mostrou crucial para:
-    *   Inspecionar a estrutura real das tabelas brutas.
-    *   Identificar a necessidade de adicionar propriedades personalizadas do HubSpot (`especialidade_medica`) ao pipeline de extração.
-    *   Depurar e resolver problemas de concorrência de banco de dados (locks de arquivo) entre o notebook de exploração e os processos de execução (Mage/dbt).
+O processo de transformação foi dividido em duas camadas lógicas, um padrão da indústria para clareza e manutenibilidade:
 
-#### Modelagem da Camada de Staging
+1.  **Camada de Staging (Silver):** O primeiro passo da transformação. O objetivo desta camada é criar uma representação 1:1 das fontes de dados, aplicando apenas limpezas básicas e padronizações. Isso isola o resto do nosso projeto da complexidade e inconsistência dos dados de origem. Foram criados os modelos `stg_contacts`, `stg_companies` e `stg_deals`, que realizam tarefas como:
+    *   Renomeação de colunas para um padrão `snake_case` limpo (ex: `properties.firstname` -> `first_name`).
+    *   Conversão de tipos de dados (casting) para formatos analíticos (ex: `VARCHAR` -> `TIMESTAMP`, `VARCHAR` -> `NUMERIC`).
+    *   Seleção apenas das colunas relevantes para a análise.
 
-O coração desta fase foi a criação da camada de *staging*. O objetivo desta camada é criar uma representação 1:1 das fontes de dados brutas, aplicando apenas limpezas básicas e padronizações. Isso isola o resto do nosso projeto da complexidade e inconsistência dos dados de origem.
+2.  **Camada de Marts (Gold):** A camada final, onde o valor de negócio é materializado. Os modelos de staging são unidos e agregados para criar tabelas de fatos e dimensões que respondem diretamente às perguntas de negócio. Foi criado o modelo `mart_companies`, que:
+    *   Une `stg_companies` e `stg_deals` usando chaves de negócio (`domain`).
+    *   Calcula métricas de negócio essenciais por empresa, como:
+        *   `total_deals`: Contagem total de atendimentos.
+        *   `total_won_deals`: Contagem de negócios ganhos.
+        *   `total_revenue`: A soma da receita de negócios ganhos, representando o **Lifetime Value (LTV)**.
+        *   `average_deal_value`: O valor médio por negócio ganho.
 
-Foram criados três modelos de staging como `views` no DuckDB:
+#### Desenvolvimento Orientado a Testes (TDD)
 
-1.  **`stg_contacts`**:
-    *   Renomeia colunas como `properties.firstname` para `first_name`.
-    *   Converte (cast) campos de data de `VARCHAR` para `TIMESTAMP`.
-    *   Seleciona apenas as colunas relevantes para a análise.
+A qualidade dos dados é a espinha dorsal deste projeto. Em vez de tratar os testes como uma etapa posterior, eles foram desenvolvidos **junto com os modelos**. Uma suíte de **19 testes automatizados** foi implementada usando `dbt` e o pacote `dbt_expectations` para garantir:
 
-2.  **`stg_companies`**:
-    *   Similarmente, renomeia e padroniza colunas.
-    *   Inclui a propriedade personalizada `especialidade_medica`, demonstrando a capacidade do pipeline de se adaptar a novos requisitos de negócio.
+*   **Singularidade e Não Nulidade:** As chaves primárias de todos os modelos são garantidamente únicas e não nulas.
+*   **Integridade Referencial:** Um teste de `relationships` valida que todo negócio em `stg_deals` (que deveria ter uma empresa) corresponde a uma empresa existente em `stg_companies`, prevenindo "negócios órfãos".
+*   **Validade de Formato:** Testes de expressão regular (`regex`) validam o formato de campos como `email`.
+*   **Consistência de Negócio:** Testes personalizados garantem que regras de negócio sejam cumpridas, como `total_won_deals <= total_deals`.
 
-3.  **`stg_deals`**:
-    *   Além da renomeação e casting de datas, converte a coluna `properties.amount` para o tipo `NUMERIC`, habilitando cálculos financeiros precisos nas fases seguintes.
+Este conjunto de testes é executado a cada `dbt test`, fornecendo um feedback imediato sobre a saúde do pipeline e garantindo que qualquer regressão ou problema de qualidade nos dados de origem seja detectado instantaneamente.
 
-A construção de toda a camada de staging é orquestrada com um único comando, `dbt build --select staging.*`, garantindo que todos os modelos sejam executados e testados de forma coesa.
+#### Como Executar a Transformação
 
-### Próximos Passos: Fase IV - Modelagem de Data Marts e Testes
+1.  Certifique-se de que o pipeline do Mage foi executado e o arquivo `hubspot_raw.db` existe.
+2.  Navegue até o diretório do projeto dbt:
+    ```bash
+    cd dbt_hubspot
+    ```
+3.  Instale os pacotes de teste (só precisa ser feito uma vez):
+    ```bash
+    dbt deps
+    ```
+4.  Execute os modelos e os testes. O comando `build` faz isso de forma conveniente:
+    ```bash
+    dbt build
+    ```
+    *Este comando irá rodar os modelos e, em seguida, os testes, em uma única execução.*
 
-Com a camada de staging (Silver) concluída e validada, nosso próximo objetivo é construir a camada de **Marts** (Gold). É aqui que a lógica de negócio será implementada para criar as tabelas de fatos e dimensões que responderão diretamente às nossas perguntas de negócio e servirão de base para o cálculo da métrica LTV:CAC.
+### Próximos Passos
 
-*   Desenvolver modelos de marts (tabelas de fatos e dimensões) para criar uma visão de negócio coesa.
-*   Implementar testes de dados no dbt (singular, de relacionamento, e personalizados) para garantir a qualidade e a integridade dos nossos modelos.
-*   Integrar a execução do dbt como um novo bloco no nosso pipeline do Mage para orquestrar o processo de ponta a ponta.
+Com o pipeline de dados local totalmente funcional e testado, o projeto está pronto para a próxima grande fase: **implantação na nuvem e automação**.
+
+*   **Containerização:** "Dockerizar" as aplicações Mage e dbt para criar ambientes portáteis e reprodutíveis.
+*   **Infraestrutura como Código (IaC):** Usar **Terraform** para provisionar a infraestrutura necessária na **AWS** (ex: S3 para o Data Lake, ECR para as imagens Docker, ECS Fargate para a execução dos containers).
+*   **CI/CD:** Criar um pipeline de Integração e Entrega Contínua (provavelmente com GitHub Actions) para automatizar o teste e o deploy de novas versões do pipeline de dados.
+
+---
+
 
