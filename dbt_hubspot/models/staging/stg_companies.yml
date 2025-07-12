@@ -1,0 +1,18 @@
+# models/staging/stg_companies.yml
+version: 2
+
+models:
+  - name: stg_companies
+    description: "Modelo de staging para empresas (médicos) do HubSpot."
+    columns:
+      - name: company_id
+        description: "A chave primária única para cada empresa."
+        tests:
+          - unique
+          - not_null
+
+      - name: domain
+        description: "O domínio da empresa, usado como chave de negócio para joins."
+        tests:
+          - unique
+          - not_null

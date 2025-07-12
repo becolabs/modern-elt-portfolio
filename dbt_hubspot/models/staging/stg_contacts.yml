@@ -1,0 +1,28 @@
+# models/staging/stg_contacts.yml
+version: 2
+
+models:
+  - name: stg_contacts
+    description: "Modelo de staging para contatos do HubSpot. Limpa e renomeia colunas."
+    columns:
+      - name: contact_id
+        description: "A chave primária única para cada contato."
+        tests:
+          - unique
+          - not_null
+      
+      - name: email
+        description: "O email do contato, usado como chave de negócio para joins."
+        tests:
+          - unique
+          - not_null
+          # Um teste de formato para garantir que se parece com um email
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: ".+@.+\\..+"
+
+      - name: lifecycle_stage
+        description: "O estágio do ciclo de vida do contato."
+        tests:
+          - accepted_values:
+              values: ['subscriber', 'lead', 'marketingqualifiedlead', 'salesqualifiedlead', 'opportunity', 'customer', 'evangelist', 'other']
+              # Este teste garante que não teremos valores inesperados como 'Lead' ou 'LEAD'.

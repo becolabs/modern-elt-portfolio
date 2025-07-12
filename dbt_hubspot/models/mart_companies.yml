@@ -1,0 +1,43 @@
+version: 2
+
+models:
+  - name: mart_companies
+    description: "Modelo de negócio que agrega métricas de deals por empresa, calculando o LTV."
+    
+    columns:
+      - name: company_id
+        description: "A chave primária da empresa."
+        tests:
+          - unique
+          - not_null
+
+      - name: company_name
+        description: "O nome da empresa (médico/clínica)."
+
+      - name: domain
+        description: "O domínio da empresa, usado como chave de negócio."
+
+      - name: especialidade_medica
+        description: "A especialidade médica principal da empresa."
+
+      - name: total_deals
+        description: "Contagem total de negócios (atendimentos) associados a esta empresa."
+
+      - name: total_won_deals
+        description: "Contagem de negócios ganhos (onde a receita é real)."
+
+      - name: total_revenue
+        description: "Receita total de negócios ganhos (LTV). Deve ser sempre positiva."
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              row_condition: "total_revenue is not null" # Boa prática para ignorar empresas sem receita
+
+      - name: average_deal_value
+        description: "Valor médio por negócio ganho."
+
+    tests:
+      # Este é um teste no nível do MODELO, não da coluna.
+      # A sintaxe correta para o teste de expressão do dbt_utils é esta.
+      - dbt_utils.expression_is_true:
+          expression: "total_won_deals <= total_deals"

@@ -1,0 +1,29 @@
+# models/staging/stg_deals.yml
+version: 2
+
+models:
+  - name: stg_deals
+    description: "Modelo de staging para negócios (atendimentos) do HubSpot."
+    columns:
+      - name: deal_id
+        description: "A chave primária única para cada negócio."
+        tests:
+          - unique
+          - not_null
+
+      - name: company_domain
+        description: "A chave de negócio que referencia o domínio da empresa."
+        tests:
+          - not_null # Queremos garantir que todo deal (exceto os que propositalmente não associamos) tenha uma empresa.
+          # Teste de relacionamento: garante que cada company_domain aqui existe na stg_companies
+          - relationships:
+              to: ref('stg_companies')
+              field: domain
+
+      - name: amount
+        description: "O valor do negócio. Deve ser um número e não negativo."
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              # Adicionamos 'row_condition' para ignorar os nulos no teste
+              row_condition: "amount is not null"
