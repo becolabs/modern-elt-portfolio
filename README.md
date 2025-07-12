@@ -215,8 +215,7 @@ Com um Data Mart (`mart_companies`) robusto e testado, a etapa final do ciclo de
 
 Foi construído um dashboard chamado "KPI's do CRM HubSpot para uma Clínica", que centraliza as métricas mais importantes e responde a perguntas de negócio cruciais:
 
-
-![Dashboard de KPIs do HubSpot](/home/marcos/projects/modern_elt/images/imagem1.png)
+![Dashboard de KPIs do HubSpot](/modern_elt/images/imagem1.png)
 
 O dashboard revela insights como:
 *   **Receita por Médico (LTV):** Identifica claramente os médicos mais valiosos para o negócio.
